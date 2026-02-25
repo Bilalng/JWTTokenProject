@@ -19,17 +19,23 @@ class AuthService
         if (!$token) {
             return null;
         }
-
-        return $this->formatToken($token);
+        $user = auth('api')->user();
+        $user->load('roles');
+        return $this->formatToken($token, $user);
     }
 
-    protected function formatToken($token)
+    protected function formatToken($token, $user)
     {
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTl() * 60,
-            'user' => auth('api')->user()
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'roles' => $user->roles->pluck('slug')
+            ]
         ];
     }
 

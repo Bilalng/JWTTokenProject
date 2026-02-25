@@ -72,7 +72,7 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-     public function getJWTIdentifier()
+    public function getJWTIdentifier()
     {
         return $this->getKey();
     }
@@ -84,6 +84,18 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'user_role' => $this->roles->pluck('name')->toArray(),
+        ];
+    }
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasPermission($permissionSLug){
+    return $this->roles()->whereHas('permissions', function($query) use ($permissionSLug){
+        $query->where('slug', $permissionSLug);
+    })->exists();
     }
 }
