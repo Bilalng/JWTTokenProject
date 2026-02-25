@@ -2,8 +2,9 @@
 
 namespace App\Services;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\AuthServiceInterface;
 use Illuminate\Support\Facades\Auth;
-class AuthService
+class AuthService implements AuthServiceInterface
 {
     protected $userRepository;
 
@@ -39,4 +40,14 @@ class AuthService
         ];
     }
 
+    public function logout(){
+         Auth::guard('api')->logout();
+        return true;
+    }
+
+    public function refresh(){
+        $newtoken = Auth::guard('api')->refresh();
+
+        return $this->formatToken($newtoken, auth('api')->user());
+    }
 }
