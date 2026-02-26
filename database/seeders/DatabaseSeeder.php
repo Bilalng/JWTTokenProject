@@ -11,22 +11,30 @@ use Illuminate\Support\Facades\Hash;
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
-    {
-        $userList = Permission::create(['name' => 'Kullanıcıları Listele', 'slug' => 'user-list']);
-        $userDelete = Permission::create(['name' => 'Kullanıcı Sil', 'slug' => 'user-delete']);
+{
+    // İzinler
+    $listPerm = Permission::updateOrCreate(['slug' => 'user-list'], ['name' => 'Listeleme']);
+    $deletePerm = Permission::updateOrCreate(['slug' => 'user-delete'], ['name' => 'Silme']);
 
-        $adminRole = Role::create(['name' => 'Admin', 'slug' => 'admin']);
-        $employeeRole = Role::create(['name' => 'Çalışan', 'slug' => 'employee']);
+    // Roller
+    $adminRole = Role::updateOrCreate(['slug' => 'admin'], ['name' => 'Yönetici']);
+    $editorRole = Role::updateOrCreate(['slug' => 'editor'], ['name' => 'Yazar']);
 
-        $adminRole->permissions()->attach([$userList->id, $userDelete->id]);
-        $employeeRole->permissions()->attach([$userList->id]);
+    // Role İzinlerini Ata
+    $adminRole->permissions()->sync([$listPerm->id, $deletePerm->id]); // Admin her şeyi yapar
+    $editorRole->permissions()->sync([$listPerm->id]); // Editor sadece listeler
 
-        $admin = User::create([
-            'name' => 'Admin Kanka',
-            'email' => 'admin@test.com',
-            'password' => Hash::make('password123'),
-        ]);
+    // Kullanıcılar
+    $admin = User::updateOrCreate(['email' => 'admin@test.com'], [
+        'name' => 'Admin Kanka',
+        'password' => Hash::make('password123'),
+    ]);
+    $admin->roles()->sync([$adminRole->id]);
 
-        $admin->roles()->attach($adminRole->id);
-    }
+    $editor = User::updateOrCreate(['email' => 'yazar@test.com'], [
+        'name' => 'Yazar Kanka',
+        'password' => Hash::make('password123'),
+    ]);
+    $editor->roles()->sync([$editorRole->id]);
+}
 }
