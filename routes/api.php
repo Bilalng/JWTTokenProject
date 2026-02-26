@@ -1,12 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::prefix('auth')->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+});
 
-Route::middleware('auth:api')->group(function(){
+Route::middleware('auth:api')->prefix('auth')->group(function () {
+    
+    Route::get('me', [AuthController::class, 'me']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    
+});
 
+Route::middleware('auth:api')->get('/test-connection', function () {
+    return response()->json(['message' => 'Bağlantı başarılı, token geçerli!']);
 });
