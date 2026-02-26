@@ -132,7 +132,7 @@ php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServicePro
 
 ## config/jwt.php içinde blacklist açık olmalı:
 
-# tymon/jwt-auth, logout edilen token’ları Redis üzerinde otomatik blacklist’te tutar.
+!tymon/jwt-auth, logout edilen token’ları Redis üzerinde otomatik blacklist’te tutar.
 
 ```
 'blacklist_enabled' => true,
