@@ -16,15 +16,12 @@ class DatabaseSeeder extends Seeder
     $listPerm = Permission::updateOrCreate(['slug' => 'user-list'], ['name' => 'Listeleme']);
     $deletePerm = Permission::updateOrCreate(['slug' => 'user-delete'], ['name' => 'Silme']);
 
-    // Roller
     $adminRole = Role::updateOrCreate(['slug' => 'admin'], ['name' => 'Yönetici']);
     $editorRole = Role::updateOrCreate(['slug' => 'editor'], ['name' => 'Yazar']);
 
-    // Role İzinlerini Ata
-    $adminRole->permissions()->sync([$listPerm->id, $deletePerm->id]); // Admin her şeyi yapar
-    $editorRole->permissions()->sync([$listPerm->id]); // Editor sadece listeler
+    $adminRole->permissions()->sync([$listPerm->id, $deletePerm->id]); 
+    $editorRole->permissions()->sync([$listPerm->id]); 
 
-    // Kullanıcılar
     $admin = User::updateOrCreate(['email' => 'admin@test.com'], [
         'name' => 'Admin Kanka',
         'password' => Hash::make('password123'),
