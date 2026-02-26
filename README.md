@@ -49,7 +49,7 @@ Mimari yapı:
 
 - PHP 8+
 - Laravel
-- MySQL / PostgreSQL
+- MySQL
 - Redis
 - tymon/jwt-auth
 
